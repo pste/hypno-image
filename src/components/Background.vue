@@ -18,9 +18,14 @@ const styleObject = reactive({
 })
 
 // params
-const animSpeed = 50;   // ms
+const animSpeed = 30;   // ms
 const screenOn = 20;    // secs
 const screenOff = 60;   // secs
+
+// events
+function clicked() {
+    //console.log("clicked")
+}
 
 // screen lock handler
 let wakeLock = null;
@@ -55,13 +60,14 @@ function startSaverAnimation() {
         if (on && count >= screenOn) {
             on = false;
             count = 0;
-             bgImage.value = null;
+            bgImage.value = null;
         }
         if (!on && count >= screenOff) {
             on = true;
             count = 0;
             bgImage.value = "url('/pattern-2.png')";
         }
+        //
     }, 1000); // every sec
 }
 
@@ -112,8 +118,12 @@ onUnmounted(() => {
 </script>
 
 <template>
-  <div class="bg" :style="styleObject">
-  </div>
+    <div 
+        class="bg" 
+        :style="styleObject"
+        @touchstart="clicked"
+        @click="clicked"
+    > </div>
 </template>
 
 <style scoped>
