@@ -17,6 +17,11 @@ const styleObject = reactive({
   backgroundImage: bgImage,
 })
 
+// params
+const animSpeed = 50;   // ms
+const screenOn = 20;    // secs
+const screenOff = 60;   // secs
+
 // screen lock handler
 let wakeLock = null;
 
@@ -39,8 +44,6 @@ async function releaseLock() {
 let timerScreenSaver = null;
 function startSaverAnimation() {
     console.log("Screensaver started ...");
-    const onScreen = 20; // 20 secs
-    const offScreen = 60 * 1000; // 60 secs
     let on = true;
     let count = 0;
     //
@@ -49,12 +52,12 @@ function startSaverAnimation() {
     }
     timerScreenSaver = window.setInterval(function () {
         count++;
-        if (on && count >= onScreen) {
+        if (on && count >= screenOn) {
             on = false;
             count = 0;
              bgImage.value = null;
         }
-        if (!on && count >= offScreen) {
+        if (!on && count >= screenOff) {
             on = true;
             count = 0;
             bgImage.value = "url('/pattern-2.png')";
@@ -85,7 +88,7 @@ function startBgAnimation() {
         else if (imgy.value < -300) incy.value = 1;
 
         //console.log(imgx.value + " " + imgy.value)
-    }, 100)
+    }, animSpeed)
 }
 
 function stopBgAnimation() {
