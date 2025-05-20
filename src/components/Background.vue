@@ -23,8 +23,20 @@ const screenOn = 20;    // secs
 const screenOff = 60;   // secs
 
 // events
-function clicked() {
+function clicked(event) {
     //console.log("clicked")
+    //console.log(event.clientX);
+    const vertical = parseInt((screen.availHeight / event.clientY) * 100);
+    console.log(screen.availHeight, screen.height, event.clientY, event.pageY);
+}
+
+function dblclicked() {
+    if (timerScreenSaver) {
+        stopSaverAnimation();
+    }
+    else {
+        startSaverAnimation();
+    }
 }
 
 // screen lock handler
@@ -121,9 +133,9 @@ onUnmounted(() => {
     <div 
         class="bg" 
         :style="styleObject"
-        @touchstart="clicked"
+        @dblclick="dblclicked"
         @click="clicked"
-    > </div>
+    > </div><!--@touchstart="clicked"-->
 </template>
 
 <style scoped>
