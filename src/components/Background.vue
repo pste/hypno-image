@@ -1,12 +1,18 @@
 <script setup>
 import {  onMounted, onUnmounted, ref, reactive, computed } from 'vue'
 
+// params
+const animSpeed = 30;   // ms
+const screenOn = 20;    // secs
+const screenOff = 60;   // secs
+const imgurl = "url('/pattern-3.png')";
+
 // component data
 const imgx = ref(0);
 const imgy = ref(0);
 const incx = ref(-1);
 const incy = ref(-1);
-const bgImage = ref("url('/pattern-2.png')");
+const bgImage = ref(imgurl);
 
 const bgImagePosition = computed(() => {
     return imgx.value + "px " + imgy.value + "px";
@@ -17,24 +23,15 @@ const styleObject = reactive({
   backgroundImage: bgImage,
 })
 
-// params
-const animSpeed = 30;   // ms
-const screenOn = 20;    // secs
-const screenOff = 60;   // secs
+
 
 // events
-function clicked(event) {
-    //console.log("clicked")
-    //console.log(event.clientX);
-    const vertical = parseInt((screen.availHeight / event.clientY) * 100);
-    console.log(screen.availHeight, screen.height, event.clientY, event.pageY);
-}
-
-function dblclicked() {
+function clicked() {
     if (timerScreenSaver) {
         stopSaverAnimation();
     }
     else {
+        bgImage.value = imgurl;
         startSaverAnimation();
     }
 }
@@ -77,7 +74,7 @@ function startSaverAnimation() {
         if (!on && count >= screenOff) {
             on = true;
             count = 0;
-            bgImage.value = "url('/pattern-2.png')";
+            bgImage.value = imgurl;
         }
         //
     }, 1000); // every sec
@@ -133,7 +130,6 @@ onUnmounted(() => {
     <div 
         class="bg" 
         :style="styleObject"
-        @dblclick="dblclicked"
         @click="clicked"
     > </div><!--@touchstart="clicked"-->
 </template>
