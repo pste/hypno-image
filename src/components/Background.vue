@@ -5,6 +5,7 @@ import {  onMounted, onUnmounted, ref, reactive, computed } from 'vue'
 const animSpeed = 30;   // ms
 const screenOn = 20;    // secs
 const screenOff = 60;   // secs
+const vibration = 500;  // ms
 const imgurl = "url('/pattern-3.png')";
 
 // component data
@@ -28,11 +29,11 @@ const styleObject = reactive({
 // events
 function clicked() {
     if (timerScreenSaver) {
-        stopSaverAnimation();
+        //stopSaverAnimation();
     }
     else {
         bgImage.value = imgurl;
-        startSaverAnimation();
+        //startSaverAnimation();
     }
 }
 
@@ -97,8 +98,16 @@ function startBgAnimation() {
         imgx.value = imgx.value + incx.value;
         imgy.value = imgy.value + incy.value;
 
-        if (imgx.value > 500) incx.value = -1;
-        else if (imgx.value < -500) incx.value = 1;
+        if (imgx.value > 500) {
+            incx.value = -1;
+            navigator.vibrate(vibration);
+            console.log("bzzz");
+        }
+        else if (imgx.value < -500) {
+            incx.value = 1;
+            navigator.vibrate(vibration);
+            console.log("bzzz");
+        }
         if (imgy.value > 300) incy.value = -1;
         else if (imgy.value < -300) incy.value = 1;
 
@@ -115,13 +124,13 @@ function stopBgAnimation() {
 //
 onMounted(() => {
     startBgAnimation();
-    startSaverAnimation();
+    //startSaverAnimation();
     createLock();
 })
 
 onUnmounted(() => {
     stopBgAnimation();
-    stopSaverAnimation();
+    //stopSaverAnimation();
     releaseLock();
 })
 </script>
