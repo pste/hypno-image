@@ -1,5 +1,5 @@
 {
-  "name": "infinite-qr",
+  "name": "hypno-image",
   "private": true,
   "version": "0.0.0",
   "type": "module",
@@ -9,7 +9,6 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "qrcode": "^1.5.4",
     "vue": "^3.5.13"
   },
   "devDependencies": {
