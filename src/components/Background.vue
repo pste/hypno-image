@@ -1,18 +1,20 @@
 <script setup>
 import {  onMounted, onUnmounted, ref, reactive, computed } from 'vue'
 
-// image render stuff
+// component data
 const imgx = ref(0);
 const imgy = ref(0);
 const incx = ref(-1);
 const incy = ref(-1);
+const bgImage = ref("url('/pattern-2.png')");
 
-const bgImage = computed(() => {
+const bgImagePosition = computed(() => {
     return imgx.value + "px " + imgy.value + "px";
 })
 
 const styleObject = reactive({
-  backgroundPosition: bgImage,
+  backgroundPosition: bgImagePosition,
+  backgroundImage: bgImage,
 })
 
 // screen lock handler
@@ -33,14 +35,47 @@ async function releaseLock() {
     console.log("Wake Lock released");
 };
 
-// setup animation timer
-let timer = null;
-function startAnimation() {
-    console.log("Animation started ...");
-    if (timer) {
-        clearInterval(timer)
+// setup animation for screen saver
+let timerScreenSaver = null;
+function startSaverAnimation() {
+    console.log("Screensaver started ...");
+    const onScreen = 20; // 20 secs
+    const offScreen = 60 * 1000; // 60 secs
+    let on = true;
+    let count = 0;
+    //
+    if (timerScreenSaver) {
+        clearInterval(timerScreenSaver)
     }
-    timer = window.setInterval(function () {
+    timerScreenSaver = window.setInterval(function () {
+        count++;
+        if (on && count >= onScreen) {
+            on = false;
+            count = 0;
+             bgImage.value = null;
+        }
+        if (!on && count >= offScreen) {
+            on = true;
+            count = 0;
+            bgImage.value = "url('/pattern-2.png')";
+        }
+    }, 1000); // every sec
+}
+
+function stopSaverAnimation() {
+    clearInterval(timerScreenSaver);
+    timerScreenSaver = null;
+    console.log("Screensaver stopped.");
+}
+
+// setup animation timer for bg image
+let timerBG = null;
+function startBgAnimation() {
+    console.log("Animation started ...");
+    if (timerBG) {
+        clearInterval(timerBG)
+    }
+    timerBG = window.setInterval(function () {
         imgx.value = imgx.value + incx.value;
         imgy.value = imgy.value + incy.value;
 
@@ -49,25 +84,26 @@ function startAnimation() {
         if (imgy.value > 300) incy.value = -1;
         else if (imgy.value < -300) incy.value = 1;
 
-        styleObject.backgroundPosition
         //console.log(imgx.value + " " + imgy.value)
     }, 100)
 }
 
-function stopAnimation() {
-    clearInterval(timer);
-    timer = null;
+function stopBgAnimation() {
+    clearInterval(timerBG);
+    timerBG = null;
     console.log("Animation stopped.");
 }
 
 //
 onMounted(() => {
-    startAnimation();
+    startBgAnimation();
+    startSaverAnimation();
     createLock();
 })
 
 onUnmounted(() => {
-    stopAnimation();
+    stopBgAnimation();
+    stopSaverAnimation();
     releaseLock();
 })
 </script>
@@ -81,10 +117,6 @@ onUnmounted(() => {
 .bg {
   height: 100vh;
   width: 100vw;
-  /*background-position: center;
-  background-repeat: no-repeat;
-  background-size: cover;*/
   background-repeat: repeat;
-  background-image: url('/pattern-2.png');
 }
 </style>
