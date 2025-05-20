@@ -1,6 +1,7 @@
 <script setup>
 import {  onMounted, onUnmounted, ref, reactive, computed } from 'vue'
 
+// image render stuff
 const imgx = ref(0);
 const imgy = ref(0);
 const incx = ref(-1);
@@ -14,8 +15,31 @@ const styleObject = reactive({
   backgroundPosition: bgImage,
 })
 
-let timer;
-onMounted(() => {
+// screen lock handler
+let wakeLock = null;
+
+async function createLock() {
+    try {
+        wakeLock = await navigator.wakeLock.request("screen");
+        console.log("Wake Lock is active");
+    } catch (err) {
+        // The Wake Lock request has failed - usually system related, such as battery.
+        console.error(`${err.name}, ${err.message}`);
+    }
+}
+async function releaseLock() {
+    await wakeLock.release();
+    wakeLock = null;
+    console.log("Wake Lock released");
+};
+
+// setup animation timer
+let timer = null;
+function startAnimation() {
+    console.log("Animation started ...");
+    if (timer) {
+        clearInterval(timer)
+    }
     timer = window.setInterval(function () {
         imgx.value = imgx.value + incx.value;
         imgy.value = imgy.value + incy.value;
@@ -26,12 +50,25 @@ onMounted(() => {
         else if (imgy.value < -300) incy.value = 1;
 
         styleObject.backgroundPosition
-        console.log(imgx.value + " " + imgy.value)
+        //console.log(imgx.value + " " + imgy.value)
     }, 100)
+}
+
+function stopAnimation() {
+    clearInterval(timer);
+    timer = null;
+    console.log("Animation stopped.");
+}
+
+//
+onMounted(() => {
+    startAnimation();
+    createLock();
 })
 
 onUnmounted(() => {
-  clearInterval(timer)
+    stopAnimation();
+    releaseLock();
 })
 </script>
 
